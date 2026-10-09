@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
+from werkzeug.middleware.proxy_fix import ProxyFix
 import json
 import os
 from datetime import datetime
 
 app = Flask(__name__)
+# Trust only one isolated UDA/Caddy forwarding hop.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1, x_prefix=1)
 DATA_FILE = 'blood_pressure.json'
 
 def load_data():
